@@ -48,12 +48,17 @@ app.use(function(err, req, res, next) {
  * */
 bot.onText(/\/kn/, async (msg) => {
   try{
+    let eth = await request({
+      method: 'GET',
+      uri: 'https://api.bankcex.com/api/v1/ticker/24hr?symbol=ETHUSDT',
+      json: true
+    });
     let data = await request({
       method: 'GET',
       uri: 'https://api.bankcex.com/api/v1/ticker/24hr?symbol=KNETH',
       json: true
     });
-    bot.sendMessage(msg.chat.id,`KNOW/ETH: ${data.lastPrice * 100}\nPercent Change : ${data.priceChangePercent}%`);
+    bot.sendMessage(msg.chat.id,`Price KNOW in Bankcex:\nETH: ${data.lastPrice}\nPercent Change : ${data.priceChangePercent}%\nUSDT: ${data.lastPrice*eth.lastPrice}`);
   }catch (err){
     console.log('error: ',err);
     bot.sendMessage(msg.chat.id,'Error connect server bankcex.');

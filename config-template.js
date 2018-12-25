@@ -16,5 +16,4 @@ const redisConfig = {
 
 export default {
   mongoURL: process.env.MONGO_URL || `mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`,
-  botToken:'755095576:AAEtomDm__xhfmSzILCcPts0qE_B7ShP6Ss',
 }
