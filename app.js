@@ -58,8 +58,7 @@ bot.onText(/\/kn/, async (msg) => {
       uri: 'https://api.bankcex.com/api/v1/ticker/24hr?symbol=KNETH',
       json: true
     });
-    bot.sendMessage(msg.chat.id,`Price KNOW in Bankcex:\nETH: ${data.lastPrice}\nPercent Change : ${data.priceChangePercent}%\nUSDT: ${data.lastPrice*eth.lastPrice}`);
-  }catch (err){
+    bot.sendMessage(msg.chat.id,`Price KNOW in Bankcex:\nKN/ETH: ${data.lastPrice}\nPercent Change : ${data.priceChangePercent}%\nKN/USDT: ${data.lastPrice*eth.lastPrice}`);  }catch (err){
     console.log('error: ',err);
     bot.sendMessage(msg.chat.id,'Error connect server bankcex.');
   }
@@ -67,12 +66,17 @@ bot.onText(/\/kn/, async (msg) => {
 
 bot.onText(/\/eth/, async (msg) => {
   try{
-    let data = await request({
+    let marketcap = await request({
       method: 'GET',
-      uri: 'https://api.bankcex.com/api/v1/ticker/24hr?symbol=ETHUSDT',
+      uri: 'https://api.coinmarketcap.com/v1/ticker/ethereum',
       json: true
     });
-    bot.sendMessage(msg.chat.id,`USDT/ETH: ${data.lastPrice}\nPercent Change : ${data.priceChangePercent}%`);
+    let etherscan = await request({
+      method: 'GET',
+      uri: 'https://api.etherscan.io/api?module=stats&action=ethprice',
+      json: true
+    });
+    bot.sendMessage(msg.chat.id,`In CoinMarketCap :\nRank: ${marketcap.rank}\nUSDT/ETH: ${marketcap.lastPrice}\nBTC/ETH: ${marketcap.price_btc}\nPercent Change 1h : ${marketcap.percent_change_1h}%\n\nIn Etherscan:\nUSDT/ETH: ${etherscan.result.ethusd}\\nBTC/ETH: ${marketcap.result.ethbtc}`);
   }catch (err){
     console.log('error: ',err);
     bot.sendMessage(msg.chat.id,'Error connect server bankcex.');
