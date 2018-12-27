@@ -76,7 +76,8 @@ bot.onText(/\/eth/, async (msg) => {
       uri: 'https://api.etherscan.io/api?module=stats&action=ethprice',
       json: true
     });
-    bot.sendMessage(msg.chat.id,`In CoinMarketCap :\nRank: ${marketcap.rank}\nUSDT/ETH: ${marketcap.lastPrice}\nBTC/ETH: ${marketcap.price_btc}\nPercent Change 1h : ${marketcap.percent_change_1h}%\n\nIn Etherscan:\nUSDT/ETH: ${etherscan.result.ethusd}\\nBTC/ETH: ${marketcap.result.ethbtc}`);
+    console.log(etherscan.result);
+    bot.sendMessage(msg.chat.id,`In CoinMarketCap :\nRank: ${marketcap.rank}\nUSDT/ETH: ${marketcap.lastPrice}\nBTC/ETH: ${marketcap.price_btc}\nPercent Change 1h : ${marketcap.percent_change_1h}%\n\nIn Etherscan:\nUSDT/ETH: ${etherscan.result.ethusd}\\nBTC/ETH: ${etherscan.result.ethbtc}`);
   }catch (err){
     console.log('error: ',err);
     bot.sendMessage(msg.chat.id,'Error connect server bankcex.');
@@ -88,7 +89,7 @@ bot.onText(/\/eth/, async (msg) => {
  * Config server
  * */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '8010');
 app.set('port', port);
 
 /**
