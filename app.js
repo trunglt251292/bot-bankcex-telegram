@@ -76,8 +76,14 @@ bot.onText(/\/eth/, async (msg) => {
       uri: 'https://api.etherscan.io/api?module=stats&action=ethprice',
       json: true
     });
-    console.log(etherscan.result);
-    bot.sendMessage(msg.chat.id,`In CoinMarketCap :\nRank: ${marketcap.rank}\nUSDT/ETH: ${marketcap.lastPrice}\nBTC/ETH: ${marketcap.price_btc}\nPercent Change 1h : ${marketcap.percent_change_1h}%\n\nIn Etherscan:\nUSDT/ETH: ${etherscan.result.ethusd}\\nBTC/ETH: ${etherscan.result.ethbtc}`);
+    let String = '';
+    if(marketcap.length !== 0){
+      String +=`In CoinMarketCap :\nRank: ${marketcap[0].rank}\nUSDT/ETH: ${marketcap[0].price_usd}\nBTC/ETH: ${marketcap[0].price_btc}\nPercent Change 1h : ${marketcap[0].percent_change_1h}%`;
+    }
+    if(etherscan && etherscan.result){
+      String +=`\n\nIn Etherscan:\nUSDT/ETH: ${etherscan.result.ethusd}\nBTC/ETH: ${etherscan.result.ethbtc}`
+    }
+    bot.sendMessage(msg.chat.id,String);
   }catch (err){
     console.log('error: ',err);
     bot.sendMessage(msg.chat.id,'Error connect server bankcex.');
