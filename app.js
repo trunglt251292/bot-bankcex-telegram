@@ -1,20 +1,27 @@
-var createError = require('http-errors');
-var http = require('http');
-var express = require('express');
-var path = require('path');
-var TelegramBot = require('node-telegram-bot-api');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+import createError from 'http-errors';
+import http from 'http';
+import express from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
 import Request from 'request-promise';
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+import indexRouter from './routes/index';
+import mongoose from 'mongoose';
+import usersRouter from './routes/users';
 
-var app = express();
-var debug = require('debug')('untitled:server');
+const app = express();
+let debug = require('debug')('untitled:server');
 import Config from './config';
 
-const bot = new TelegramBot(Config.botToken,{polling: true});
-
+// const bot = new TelegramBot(Config.botToken,{polling: true});
+mongoose.Promise = global.Promise;
+mongoose.connect(Config.mongoURL, async (err) => {
+  if (err){
+    throw err;
+  }else {
+    console.log('Connect database bounty successfully.');
+  }
+});
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -46,50 +53,53 @@ app.use(function(err, req, res, next) {
 /**
  * Bot Telegram
  * */
-bot.onText(/\/kn/, async (msg) => {
-  try{
-    let eth = await request({
-      method: 'GET',
-      uri: 'https://api.bankcex.com/api/v1/ticker/24hr?symbol=ETHUSDT',
-      json: true
-    });
-    let data = await request({
-      method: 'GET',
-      uri: 'https://api.bankcex.com/api/v1/ticker/24hr?symbol=KNETH',
-      json: true
-    });
-    bot.sendMessage(msg.chat.id,`Price KNOW in Bankcex:\nKN/ETH: ${data.lastPrice}\nPercent Change : ${data.priceChangePercent}%\nKN/USDT: ${data.lastPrice*eth.lastPrice}`);  }catch (err){
-    console.log('error: ',err);
-    bot.sendMessage(msg.chat.id,'Error connect server bankcex.');
-  }
-});
-
-bot.onText(/\/eth/, async (msg) => {
-  try{
-    let marketcap = await request({
-      method: 'GET',
-      uri: 'https://api.coinmarketcap.com/v1/ticker/ethereum',
-      json: true
-    });
-    let etherscan = await request({
-      method: 'GET',
-      uri: 'https://api.etherscan.io/api?module=stats&action=ethprice',
-      json: true
-    });
-    let String = '';
-    if(marketcap.length !== 0){
-      String +=`In CoinMarketCap :\nRank: ${marketcap[0].rank}\nUSDT/ETH: ${marketcap[0].price_usd}\nBTC/ETH: ${marketcap[0].price_btc}\nPercent Change 1h : ${marketcap[0].percent_change_1h}%`;
-    }
-    if(etherscan && etherscan.result){
-      String +=`\n\nIn Etherscan:\nUSDT/ETH: ${etherscan.result.ethusd}\nBTC/ETH: ${etherscan.result.ethbtc}`
-    }
-    bot.sendMessage(msg.chat.id,String);
-  }catch (err){
-    console.log('error: ',err);
-    bot.sendMessage(msg.chat.id,'Error connect server bankcex.');
-  }
-});
-
+// bot.onText(/\/kn/, async (msg) => {
+//   try{
+//     let eth = await request({
+//       method: 'GET',
+//       uri: 'https://api.bankcex.com/api/v1/ticker/24hr?symbol=ETHUSDT',
+//       json: true
+//     });
+//     let data = await request({
+//       method: 'GET',
+//       uri: 'https://api.bankcex.com/api/v1/ticker/24hr?symbol=KNETH',
+//       json: true
+//     });
+//     bot.sendMessage(msg.chat.id,`Price KNOW in Bankcex:\nKN/ETH: ${data.lastPrice}\nPercent Change : ${data.priceChangePercent}%\nKN/USDT: ${data.lastPrice*eth.lastPrice}`);  }catch (err){
+//     console.log('error: ',err);
+//     bot.sendMessage(msg.chat.id,'Error connect server bankcex.');
+//   }
+// });
+//
+// bot.onText(/\/eth/, async (msg) => {
+//   try{
+//     let marketcap = await request({
+//       method: 'GET',
+//       uri: 'https://api.coinmarketcap.com/v1/ticker/ethereum',
+//       json: true
+//     });
+//     let etherscan = await request({
+//       method: 'GET',
+//       uri: 'https://api.etherscan.io/api?module=stats&action=ethprice',
+//       json: true
+//     });
+//     let String = '';
+//     if(marketcap.length !== 0){
+//       String +=`In CoinMarketCap :\nRank: ${marketcap[0].rank}\nUSDT/ETH: ${marketcap[0].price_usd}\nBTC/ETH: ${marketcap[0].price_btc}\nPercent Change 1h : ${marketcap[0].percent_change_1h}%`;
+//     }
+//     if(etherscan && etherscan.result){
+//       String +=`\n\nIn Etherscan:\nUSDT/ETH: ${etherscan.result.ethusd}\nBTC/ETH: ${etherscan.result.ethbtc}`
+//     }
+//     bot.sendMessage(msg.chat.id,String);
+//   }catch (err){
+//     console.log('error: ',err);
+//     bot.sendMessage(msg.chat.id,'Error connect server bankcex.');
+//   }
+// });
+import * as Worker from './worker';
+// import Bot from './Bot-telegram';
+//
+// new Bot();
 
 /**
  * Config server
