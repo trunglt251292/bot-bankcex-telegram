@@ -9,25 +9,30 @@ export default class Bot {
 
     this.bot.onText(/\/start/, async (msg) => {
       try{
-        let inviteCode = msg.text.split(' ')[1];
-        if (inviteCode){
-          let checkuser = await User.findOne({telegram_id: inviteCode});
-          if (checkuser && parseInt(inviteCode) !== checkuser.telegram_id){
-            let userUseCode = await User.findOne({telegram_id: msg.from.id});
-            if(!userUseCode){
-              await User.create({
-                telegram_id: msg.from.id,
-                invited_by: inviteCode
-              });
-              if(checkuser.ref_count < 3){
-                checkuser.balance += Config.ref_bonus;
-                checkuser.ref_count = await User.count({invited_by: inviteCode});
-                await checkuser.save();
+        let count_airdrop = await User.count({});
+        if(count_airdrop < Config.airdrop_limit){
+          let inviteCode = msg.text.split(' ')[1];
+          if (inviteCode){
+            let checkuser = await User.findOne({telegram_id: inviteCode});
+            if (checkuser && parseInt(inviteCode) !== checkuser.telegram_id){
+              let userUseCode = await User.findOne({telegram_id: msg.from.id});
+              if(!userUseCode){
+                await User.create({
+                  telegram_id: msg.from.id,
+                  invited_by: inviteCode
+                });
+                if(checkuser.ref_count < 3){
+                  checkuser.balance += Config.ref_bonus;
+                  checkuser.ref_count = await User.count({invited_by: inviteCode});
+                  await checkuser.save();
+                }
               }
             }
           }
+          this.bot.sendMessage(msg.chat.id,Config.HelloMessage, Config.buttons);
+        } else {
+          this.bot.sendMessage(msg.chat.id,"PO8 Token Airdrop have finished.");
         }
-        this.bot.sendMessage(msg.chat.id,Config.HelloMessage, Config.buttons);
       }catch (e) {
         this.bot.sendMessage(msg.chat.id,'Error connect server bankcex.');
       }
