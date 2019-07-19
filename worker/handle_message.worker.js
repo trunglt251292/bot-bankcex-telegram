@@ -84,17 +84,13 @@ Q.process("ON_MSG", 5, async (job, done) => {
         break;
       case 'Referral':
         let message_link = "Your referral link:\n" +
-          "http://telegram.me/"+Configs.botUsername+"?start=" + msg.from.id + "\n" + "You will receive 300/Ref PO8. Maximum 3 person.";
+          "http://telegram.me/"+Configs.botUsername+"?start=" + msg.from.id + "\n" + "You will receive 300/Ref PO8. Maximum 3 people.";
         Bot_Telegram.sendMessage(telegram_id, {message: message_link, buttons: Configs.buttons});
         break;
       case 'Create post in social':
-        if(step.step < 3){
-          Bot_Telegram.sendMessage(telegram_id, {message: 'Warning: Please follow the order of steps'});
-        } else {
-          let message_social = "Share post in socical :\n" +
-            "Content Post: ";
-          Bot_Telegram.sendMessage(telegram_id, {message: message_social, buttons: Configs.buttons_social});
-        }
+        let message_social = "Share post in socical :\n" +
+          "Content Post: ";
+        Bot_Telegram.sendMessage(telegram_id, {message: message_social, buttons: Configs.buttons_social});
         break;
       case 'Balance':
         let balance = await User_Services.getBalanceByUser(telegram_id);
