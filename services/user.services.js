@@ -59,7 +59,7 @@ export async function claimPO8(options) {
         telegram_id: options
       })
     }
-    if(step.step < 4){
+    if(step.step < 3){
        data.message_reply = 'You are not eligible. Please follow the order of steps. Thank You.';
     } else if (check.claim) {
       data.message_reply = 'You have claimed.';

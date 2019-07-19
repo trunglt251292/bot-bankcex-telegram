@@ -28,6 +28,7 @@ export async function handleDefaultMesage(msg, conversation) {
           user.email = mail;
           await user.save();
           data.message_reply = 'Update email done.';
+          data.buttons = Configs.buttons;
         }
       } else if (conversation.context === 'eth') {
         let user = await Users.findOne({telegram_id});
@@ -40,64 +41,79 @@ export async function handleDefaultMesage(msg, conversation) {
           user.ethAddress = ethAddress;
           await user.save();
           data.message_reply = 'Update ETH Address done.';
-          // Queue.getInstance().pushJob('CHECK_RECEIVE_AIRDROP', {telegram_id});
+          data.buttons = Configs.buttons;
         }
       } else if (conversation.context === 'facebook'){
-        let facebook = await Social.findOne({telegram_id, social: 'facebook'});
-        if(!facebook){
-          await Social.create({
-            telegram_id,
-            social: 'facebook',
-            link: msg.text.toString().toLowerCase()
-          });
+        if(msg.text.toLowerCase().includes('facebook.com')){
+          let facebook = await Social.findOne({telegram_id, social: 'facebook'});
+          if(!facebook){
+            await Social.create({
+              telegram_id,
+              social: 'facebook',
+              link: msg.text.toString().toLowerCase()
+            });
+          } else {
+            facebook.link = msg.text.toString().toLowerCase();
+            await facebook.save();
+          }
+          data.message_reply = 'Update link post facebook done.';
+          data.buttons = Configs.buttons_social;
+          let count = await Social.count({telegram_id, social:{$in:['facebook', 'twitter']}});
+          if(count === 2){
+            step_user.step = 4;
+            await step_user.save();
+          }
         } else {
-          facebook.link = msg.text.toString().toLowerCase();
-          await facebook.save();
-        }
-        data.message_reply = 'Update link post facebook done.';
-        data.buttons = Configs.buttons_social;
-        let count = await Social.count({telegram_id, social:{$in:['facebook', 'telegram', 'twitter']}});
-        if(count === 3){
-          step_user.step = 4;
-          await step_user.save();
+          data.message_reply = 'Warning: Link post invalid.';
+          data.buttons = Configs.buttons_social;
         }
       } else if (conversation.context === 'telegram'){
-        let telegram = await Social.findOne({telegram_id, social: 'telegram'});
-        if(!telegram){
-          await Social.create({
-            telegram_id,
-            social: 'telegram',
-            link: msg.text.toString().toLowerCase()
-          });
+        if(msg.text.toLowerCase().includes('telegram.org')){
+          let telegram = await Social.findOne({telegram_id, social: 'telegram'});
+          if(!telegram){
+            await Social.create({
+              telegram_id,
+              social: 'telegram',
+              link: msg.text.toString().toLowerCase()
+            });
+          } else {
+            telegram.link = msg.text.toString().toLowerCase();
+            await telegram.save();
+          }
+          data.message_reply = 'Update link post telegram done.';
+          data.buttons = Configs.buttons_social;
+          let count = await Social.count({telegram_id, social:{$in:['facebook', 'telegram', 'twitter']}});
+          if(count === 3){
+            step_user.step = 4;
+            await step_user.save();
+          }
         } else {
-          telegram.link = msg.text.toString().toLowerCase();
-          await telegram.save();
+          data.message_reply = 'Warning: Link post invalid.';
+          data.buttons = Configs.buttons_social;
         }
-        data.message_reply = 'Update link post telegram done.';
-        data.buttons = Configs.buttons_social;
-        let count = await Social.count({telegram_id, social:{$in:['facebook', 'telegram', 'twitter']}});
-        if(count === 3){
-          step_user.step = 4;
-          await step_user.save();
-        }
-      } else if (conversation.context === 'twitter'){
-        let twitter = await Social.findOne({telegram_id, social: 'twitter'});
-        if(!twitter){
-          await Social.create({
-            telegram_id,
-            social: 'twitter',
-            link: msg.text.toString().toLowerCase()
-          });
+      } else if (conversation.context === 'twitter') {
+        if (msg.text.toLowerCase().includes('twitter.com')) {
+          let twitter = await Social.findOne({telegram_id, social: 'twitter'});
+          if (!twitter) {
+            await Social.create({
+              telegram_id,
+              social: 'twitter',
+              link: msg.text.toString().toLowerCase()
+            });
+          } else {
+            twitter.link = msg.text.toString().toLowerCase();
+            await twitter.save();
+          }
+          data.message_reply = 'Update link post twitter done.';
+          data.buttons = Configs.buttons_social;
+          let count = await Social.count({telegram_id, social: {$in: ['facebook', 'twitter']}});
+          if (count === 2) {
+            step_user.step = 4;
+            await step_user.save();
+          }
         } else {
-          twitter.link = msg.text.toString().toLowerCase();
-          await twitter.save();
-        }
-        data.message_reply = 'Update link post twitter done.';
-        data.buttons = Configs.buttons_social;
-        let count = await Social.count({telegram_id, social:{$in:['facebook', 'telegram', 'twitter']}});
-        if(count === 3){
-          step_user.step = 4;
-          await step_user.save();
+          data.message_reply = 'Warning: Link post invalid.';
+          data.buttons = Configs.buttons_social;
         }
       } else {
         data.message_reply = "Warning: Invalid Commands";

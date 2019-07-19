@@ -12,24 +12,22 @@ export default class Bot {
         let inviteCode = msg.text.split(' ')[1];
         if (inviteCode){
           let checkuser = await User.findOne({telegram_id: inviteCode});
-          if (checkuser && inviteCode !== checkuser.telegram_id){
+          if (checkuser && parseInt(inviteCode) !== checkuser.telegram_id){
             let userUseCode = await User.findOne({telegram_id: msg.from.id});
-            if(userUseCode){
-              userUseCode.invited_by = inviteCode
-            } else {
+            if(!userUseCode){
               await User.create({
                 telegram_id: msg.from.id,
                 invited_by: inviteCode
               });
-            }
-            if(checkuser.ref_count < 3){
-              checkuser.balance += Config.ref_bonus;
-              checkuser.ref_count = await User.count({invited_by: inviteCode});
-              await checkuser.save();
+              if(checkuser.ref_count < 3){
+                checkuser.balance += Config.ref_bonus;
+                checkuser.ref_count = await User.count({invited_by: inviteCode});
+                await checkuser.save();
+              }
             }
           }
         }
-        this.bot.sendMessage(msg.chat.id,Config.FollowChannel, Config.buttons);
+        this.bot.sendMessage(msg.chat.id,Config.HelloMessage, Config.buttons);
       }catch (e) {
         this.bot.sendMessage(msg.chat.id,'Error connect server bankcex.');
       }
@@ -53,5 +51,8 @@ export default class Bot {
     } else {
       this.bot.sendMessage(id, data.message);
     }
+  }
+  getMember(chatid, userid){
+    return this.bot.getChatMember(chatid, userid);
   }
 }

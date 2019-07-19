@@ -1,0 +1,11 @@
+{
+  "apps": [
+    {
+      "name": "Bot_telegram",
+      "script": "npm",
+      "args": "start",
+      "instances" : "max",
+      "exec_mode" : "cluster"
+    }
+  ]
+}

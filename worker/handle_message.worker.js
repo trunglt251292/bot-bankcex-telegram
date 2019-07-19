@@ -13,12 +13,13 @@ const Button_Cancel = {
   }
 };
 
-const Social = `- Facebook PO8: \n` +
-  `- Telegram PO8 : \n` +
-  `- Twitter PO8 : \n` +
-  `- FaceBook SKULLY : \n` +
-  `- Telegram SKULLY : \n` +
-  `Thanks you and you have finished step 1.` +
+const Social = `- Facebook PO8: ${Configs.link_facebook_po8} \n` +
+  `- Telegram PO8 : ${Configs.link_telegram_po8} \n` +
+  `- Twitter PO8 : ${Configs.link_twitter_po8} \n` +
+  `- FaceBook SKULLY : ${Configs.link_facebook_skully} \n` +
+  `- Telegram SKULLY : ${Configs.link_telegram_skully} \n` +
+  `- Twitter SKULLY : ${Configs.link_twitter_skully} \n` +
+  `Thanks you.` +
   `\n`;
 
 Q.process("ON_MSG", 5, async (job, done) => {
@@ -81,12 +82,12 @@ Q.process("ON_MSG", 5, async (job, done) => {
           }
         }
         break;
-      case '5. Referral':
+      case 'Referral':
         let message_link = "Your referral link:\n" +
           "http://telegram.me/"+Configs.botUsername+"?start=" + msg.from.id + "\n" + "You will receive 300/Ref PO8. Maximum 3 person.";
         Bot_Telegram.sendMessage(telegram_id, {message: message_link, buttons: Configs.buttons});
         break;
-      case '4. Create post in social':
+      case 'Create post in social':
         if(step.step < 3){
           Bot_Telegram.sendMessage(telegram_id, {message: 'Warning: Please follow the order of steps'});
         } else {
@@ -95,11 +96,11 @@ Q.process("ON_MSG", 5, async (job, done) => {
           Bot_Telegram.sendMessage(telegram_id, {message: message_social, buttons: Configs.buttons_social});
         }
         break;
-      case '6. Balance':
+      case 'Balance':
         let balance = await User_Services.getBalanceByUser(telegram_id);
         Bot_Telegram.sendMessage(telegram_id, {message: `Total balance of you : ${balance}`, buttons: Configs.buttons});
         break;
-      case '7. Claim 8$ (800 PO8)':
+      case '4. Claim 8$ (800 PO8)':
         let data_claim  = await User_Services.claimPO8(telegram_id);
         Bot_Telegram.sendMessage(data_claim.telegram_id, {message: data_claim.message_reply, buttons: data_claim.buttons});
         break;
@@ -117,21 +118,23 @@ Q.process("ON_MSG", 5, async (job, done) => {
           Bot_Telegram.sendMessage(telegram_id, {message: 'Please enter your list post facebook:', buttons: Button_Cancel})
         }
         break;
-      case "2. Telegram":
-        conversation.context = 'telegram';
-        await conversation.save();
-        let telegram = await checkSocial({
-          telegram_id,
-          social: 'telegram'
-        });
-        if (telegram){
-          let message = `Your currently link post telegram is ${telegram.link}. To change your link post, enter your new link post.`;
-          Bot_Telegram.sendMessage(telegram_id, {message, buttons: Button_Cancel});
-        } else {
-          Bot_Telegram.sendMessage(telegram_id, {message: 'Please enter your list post telegram:', buttons: Button_Cancel})
-        }
+      case "3. Join Group Telegram":
+        let member = await Bot_Telegram.getMember('@po8_airdrop_bot', telegram_id);
+        console.log(member);
+        // conversation.context = 'telegram';
+        // await conversation.save();
+        // let telegram = await checkSocial({
+        //   telegram_id,
+        //   social: 'telegram'
+        // });
+        // if (telegram){
+        //   let message = `Your currently link post telegram is ${telegram.link}. To change your link post, enter your new link post.`;
+        //   Bot_Telegram.sendMessage(telegram_id, {message, buttons: Button_Cancel});
+        // } else {
+        //   Bot_Telegram.sendMessage(telegram_id, {message: 'Please enter your list post telegram:', buttons: Button_Cancel})
+        // }
         break;
-      case "3. Twitter":
+      case "2. Twitter":
         conversation.context = 'twitter';
         await conversation.save();
         let twitter = await checkSocial({
@@ -149,6 +152,9 @@ Q.process("ON_MSG", 5, async (job, done) => {
         conversation.context = 'normal';
         await conversation.save();
         Bot_Telegram.sendMessage(telegram_id, {message: Configs.HelloMessage, buttons: Configs.buttons});
+        break;
+      case "Join Telegram PO8":
+        Bot_Telegram.sendMessage(telegram_id, {message: Configs.FollowChannel, buttons: Configs.buttons});
         break;
       default:
         if(!msg.text.includes('start')){
