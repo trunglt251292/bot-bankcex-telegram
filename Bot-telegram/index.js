@@ -29,8 +29,10 @@ export default class Bot {
               }
             }
           }
+          this.bot.sendPhoto(msg.chat.id, 'https://storage.googleapis.com/skull/image/banner.jpg');
           this.bot.sendMessage(msg.chat.id,Config.HelloMessage, Config.buttons);
         } else {
+          this.bot.sendPhoto(msg.chat.id, 'https://storage.googleapis.com/skull/image/banner.jpg')
           this.bot.sendMessage(msg.chat.id,"PO8 Token Airdrop have finished.");
         }
       }catch (e) {

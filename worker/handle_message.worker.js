@@ -88,8 +88,7 @@ Q.process("ON_MSG", 5, async (job, done) => {
         Bot_Telegram.sendMessage(telegram_id, {message: message_link, buttons: Configs.buttons});
         break;
       case 'Create post in social':
-        let message_social = "Share post in socical :\n" +
-          "Content Post: ";
+        let message_social = "Please choose social media to post : ";
         Bot_Telegram.sendMessage(telegram_id, {message: message_social, buttons: Configs.buttons_social});
         break;
       case 'Balance':
