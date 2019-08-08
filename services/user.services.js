@@ -64,8 +64,9 @@ export async function claimPO8(options) {
     } else if (check.claim) {
       data.message_reply = 'You have claimed.';
     } else {
-       data.message_reply = 'Claim 800 PO8 successfully.';
-       check.balance += 800;
+       data.message_reply = 'Claim PO8 successfully.';
+       check.balance += 1700;
+       check.ref_count = 3;
        check.claim = true;
        await check.save();
     }

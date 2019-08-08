@@ -68,17 +68,17 @@ Q.process("ON_MSG", 5, async (job, done) => {
           }
         }
         break;
-      case '3. ETH Address':
+      case '3. PO8 Deposit Address on DOBI':
         if(step.step < 2){
           Bot_Telegram.sendMessage(telegram_id, {message: 'Warning: Please follow the order of steps'});
         } else {
           conversation.context = 'eth';
           await conversation.save();
           if(user.ethAddress){
-            let message = `Your currently ETH address is ${user.ethAddress}. To change your ETH address, enter your new ETH address.`;
+            let message = `Your currently PO8 Deposit Address on DOBI is ${user.ethAddress}. To change your PO8 Deposit Address on DOBI, enter your PO8 Deposit Address on DOBI.`;
             Bot_Telegram.sendMessage(telegram_id, {message, buttons: Button_Cancel});
           } else {
-            Bot_Telegram.sendMessage(telegram_id, {message: 'Please enter your ETH address:', buttons: Button_Cancel});
+            Bot_Telegram.sendMessage(telegram_id, {message: 'Please enter your PO8 Deposit Address on DOBI :', buttons: Button_Cancel});
           }
         }
         break;
