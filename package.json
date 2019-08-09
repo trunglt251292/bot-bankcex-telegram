@@ -15,6 +15,7 @@
     "babel-register": "^6.26.0",
     "basic-auth-connect": "^1.0.0",
     "cookie-parser": "~1.4.3",
+    "cron": "^1.7.1",
     "debug": "~2.6.9",
     "ethereum-address": "0.0.4",
     "express": "~4.16.0",

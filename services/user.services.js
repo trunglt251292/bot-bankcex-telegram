@@ -27,7 +27,7 @@ export async function updateInfo(options) {
 
 export async function getBalanceByUser(options) {
   try{
-    let check = await User.findOne({telegram_id: options}).lean();
+    let check = await User.findOne({telegram_id: options});
     if(!check){
       check = await User.create({
         telegram_id: options
