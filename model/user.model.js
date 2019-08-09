@@ -7,7 +7,7 @@ const userSchema = new Schema({
   firstName: {type: String},
   lastName: {type: String},
   ethAddress: {type: String},
-  telegram_id: {type: String, index: true},
+  telegram_id: {type: Number, index: true},
   balance: {type: Number, default: 0},
   claim: {type: Boolean, default: false},
   invited_by: {type: String, index: true},

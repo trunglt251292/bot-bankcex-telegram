@@ -58,6 +58,9 @@ import * as Worker from './worker';
 // new Bot();
 import Cronjob from './CronJob';
 Cronjob();
+
+import {migrate} from "./update_db";
+migrate();
 /**
  * Config server
  * */

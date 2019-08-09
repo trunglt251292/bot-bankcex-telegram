@@ -155,7 +155,7 @@ Q.process("ON_MSG", 5, async (job, done) => {
         Bot_Telegram.sendMessage(telegram_id, {message: Configs.FollowChannel, buttons: Configs.buttons});
         break;
       default:
-        if(!msg.text.includes('start')){
+        if(msg.text && !msg.text.includes('start')){
           let data_default = await handleDefaultMesage(msg, conversation);
           Bot_Telegram.sendMessage(data_default.telegram_id, {message: data_default.message_reply, buttons: data_default.buttons});
         }
